@@ -1,7 +1,9 @@
-OpenAI from "openai";
+import express from "express";
+import cors from "cors";
+import OpenAI from "openai";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 
 app.use(cors());
 app.use(express.json());
@@ -10,6 +12,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// 🔥 Endpoint principal (POST)
 app.post("/api/kosh", async (req, res) => {
   try {
     const msg = req.body.message || "";
@@ -18,34 +21,24 @@ app.post("/api/kosh", async (req, res) => {
       return res.json({ reply: "Escríbeme algo para ayudarte." });
     }
 
-    const completion = await openai.responses.create({
+    const response = await openai.responses.create({
       model: "gpt-4o-mini",
       input: msg
     });
 
-    const reply = completion.output_text || "No pude responder.";
+    const reply =
+      response.output?.[0]?.content?.[0]?.text ||
+      "No pude responder.";
 
     res.json({ reply });
 
   } catch (error) {
-    console.error("ERROR EN KOSH:", error);
+    console.error("ERROR REAL:", error);
     res.status(500).json({ reply: "Error en Kosh 😅" });
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("Kosh está vivo 🚀");
-});
-
-app.listen(port, () => {
-  console.log(`Servidor corriendo en puerto ${port}`);
-});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ reply: "Error en Kosh 😅" });
-  }
-});
-
+// 🟢 Ruta base
 app.get("/", (req, res) => {
   res.send("Kosh está vivo 🚀");
 });

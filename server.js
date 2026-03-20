@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import OpenAI from "openai";
 
 const app = express();
 const port = process.env.PORT || 10000;
@@ -12,29 +11,16 @@ app.get("/", (req, res) => {
   res.send("Kosh está vivo 🚀");
 });
 
-app.post("/api/kosh", async (req, res) => {
-  try {
-    const msg = req.body?.message || "";
+app.post("/api/kosh", (req, res) => {
+  const msg = req.body?.message || "";
+  return res.json({
+    reply: "Kosh recibió: " + msg
+  });
+});
 
-    if (!msg.trim()) {
-      return res.json({ reply: "Escríbeme algo para responder." });
-    }
-
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("Falta OPENAI_API_KEY");
-      return res.status(500).json({ reply: "Falta OPENAI_API_KEY en Render." });
-    }
-
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
-
-    const response = await openai.responses.create({
-      model: "gpt-4o-mini",
-      input: msg
-    });
-
-    const reply = response.output_text || "No pude responder.";
+app.listen(port, () => {
+  console.log(`Servidor corriendo en puerto ${port}`);
+});    const reply = response.output_text || "No pude responder.";
     return res.json({ reply });
 
   } catch (error) {

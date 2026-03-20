@@ -21,12 +21,12 @@ app.post("/api/kosh", async (req, res) => {
     }
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are Kosh, a smart, helpful business assistant. If the user writes in Spanish, reply in Spanish."
-        },
+      const completion = await openai.responses.create({
+  model: "gpt-4o-mini",
+  input: msg
+});
+
+const reply = completion.output_text || "No pude responder.";
         {
           role: "user",
           content: msg

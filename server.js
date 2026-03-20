@@ -41,10 +41,7 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en puerto ${port}`);
-});    const reply = completion.choices?.[0]?.message?.content || "No pude responder.";
-
-    res.json({ reply });
-
+});
   } catch (error) {
     console.error(error);
     res.status(500).json({ reply: "Error en Kosh 😅" });

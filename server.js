@@ -12,13 +12,13 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// 🔥 Endpoint principal (POST)
+// Endpoint principal
 app.post("/api/kosh", async (req, res) => {
   try {
     const msg = req.body.message || "";
 
     if (!msg.trim()) {
-      return res.json({ reply: "Escríbeme algo para ayudarte." });
+      return res.json({ reply: "Escríbeme algo para poder responderte." });
     }
 
     const response = await openai.responses.create({
@@ -31,14 +31,13 @@ app.post("/api/kosh", async (req, res) => {
       "No pude responder.";
 
     res.json({ reply });
-
   } catch (error) {
     console.error("ERROR REAL:", error);
     res.status(500).json({ reply: "Error en Kosh 😅" });
   }
 });
 
-// 🟢 Ruta base
+// Ruta base
 app.get("/", (req, res) => {
   res.send("Kosh está vivo 🚀");
 });

@@ -8,33 +8,46 @@ const port = process.env.PORT || 10000;
 app.use(cors());
 app.use(express.json());
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+app.get("/", (req, res) => {
+  res.send("Kosh está vivo 🚀");
 });
 
-// Endpoint principal
 app.post("/api/kosh", async (req, res) => {
   try {
-    const msg = req.body.message || "";
+    const msg = req.body?.message || "";
 
     if (!msg.trim()) {
-      return res.json({ reply: "Escríbeme algo para poder responderte." });
+      return res.json({ reply: "Escríbeme algo para responder." });
     }
+
+    if (!process.env.OPENAI_API_KEY) {
+      console.error("Falta OPENAI_API_KEY");
+      return res.status(500).json({ reply: "Falta OPENAI_API_KEY en Render." });
+    }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
 
     const response = await openai.responses.create({
       model: "gpt-4o-mini",
       input: msg
     });
 
-    const reply =
-      response.output?.[0]?.content?.[0]?.text ||
-      "No pude responder.";
+    const reply = response.output_text || "No pude responder.";
+    return res.json({ reply });
 
-    res.json({ reply });
   } catch (error) {
-    console.error("ERROR REAL:", error);
-    res.status(500).json({ reply: "Error en Kosh 😅" });
+    console.error("ERROR REAL COMPLETO:", error);
+    return res.status(500).json({
+      reply: "Backend error: " + (error?.message || "desconocido")
+    });
   }
+});
+
+app.listen(port, () => {
+  console.log(`Servidor corriendo en puerto ${port}`);
+});  }
 });
 
 // Ruta base

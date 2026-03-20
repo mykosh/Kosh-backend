@@ -20,21 +20,28 @@ app.post("/api/kosh", async (req, res) => {
       return res.json({ reply: "Escríbeme algo para ayudarte." });
     }
 
-    const completion = await openai.chat.completions.create({
-      const completion = await openai.responses.create({
-  model: "gpt-4o-mini",
-  input: msg
-});
-
-const reply = completion.output_text || "No pude responder.";
-        {
-          role: "user",
-          content: msg
-        }
-      ]
+    const completion = await openai.responses.create({
+      model: "gpt-4o-mini",
+      input: msg
     });
 
-    const reply = completion.choices?.[0]?.message?.content || "No pude responder.";
+    const reply = completion.output_text || "No pude responder.";
+
+    res.json({ reply });
+
+  } catch (error) {
+    console.error("ERROR EN KOSH:", error);
+    res.status(500).json({ reply: "Error en Kosh 😅" });
+  }
+});
+
+app.get("/", (req, res) => {
+  res.send("Kosh está vivo 🚀");
+});
+
+app.listen(port, () => {
+  console.log(`Servidor corriendo en puerto ${port}`);
+});    const reply = completion.choices?.[0]?.message?.content || "No pude responder.";
 
     res.json({ reply });
 
